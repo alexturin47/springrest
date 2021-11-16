@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link th:href="@{~/resources/css/bootstrap.min.css}" rel="stylesheet" type="text/css"/>
+    <title>All people</title>
+</head>
+<body>
+
+<h3 class="title  mt-2 text-center">Список пользователей</h3>
+<div class="container">
+
+    <div class="row align-content-center bg-light border border-info mt-3 mb-1" th:each="user : ${users}">
+        <div class="col-2 align-self-center" th:text="${user.getFirstname()}"></div>
+        <div class="col-2 align-self-center" th:text="${user.getLastname()}"></div>
+        <div class="col-2 align-self-center" th:text="${user.getEmail()}"></div>
+<!--        <div class="col-1 align-self-center" th:text="${user.getAge()}"></div>-->
+        <div class="col-2 align-self-center bg-info">
+            <div th:each="role :${user.getRoles()}" th:text="${role.getName()}"></div>
+        </div>
+
+        <form class="col-4 list-buttons d-flex align-self-center align-items-center justify-content-end" th:action="@{/{id}(id=${user.getId()})}" th:object="${user}"
+              th:method="DELETE">
+            <a class="btn btn-primary mr-1" role="button" th:href="@{/admin/user/{id}(id=${user.getId()})}">Смотреть</a>
+            <a class="btn btn-primary mr-1" role="button" th:href="@{/admin/edit/{id}(id=${user.getId()})}">Изменить</a>
+            <input class="btn btn-danger" type="submit" value="Удалить"/>
+        </form>
+    </div>
+
+
+    <div class="row justify-content-around mt-4">
+        <div class="col-3 d-flex justify-content-end">
+            <a class="btn btn-primary align-self-center" href="/admin/new">Добавить пользователя</a>
+        </div>
+        <div class="col-3 d-flex justify-content-start">
+            <a class="btn btn-primary align-self-center" href="/logout">Выйти</a>
+        </div>
+
+    </div>
+
+</div>
+</body>
+<style>
+    .row{
+        min-height: 50px;
+    }
+
+
+</style>
+</html>
