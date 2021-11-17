@@ -67,7 +67,7 @@ public class MainController {
         return "/edit";
     }
 
-    @RequestMapping(value = "/update/{username}", method = {RequestMethod.POST, RequestMethod.PATCH})
+    @PatchMapping( "/update/{username}")
     public String updateAdmin(@ModelAttribute("user") @Valid UserDto userDto
             ,BindingResult bindingResult
             , @PathVariable("username") String username
@@ -116,7 +116,7 @@ public class MainController {
         return "/delete";
     }
 
-    @RequestMapping(value = "/{id}", method = {RequestMethod.POST, RequestMethod.DELETE})
+    @DeleteMapping( "/{id}")
     public String delete(@PathVariable("id") Long id) {
         userService.deleteUser(id);
         return "redirect:/admin";
