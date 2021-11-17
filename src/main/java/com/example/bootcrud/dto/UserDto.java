@@ -15,6 +15,11 @@ public class UserDto {
     private String lastname;
     private String password;
     private String email;
-    private int age;
+ //   private int age;
     private Set<Role> roles;
+
+    public Boolean hasAuthorities(String role){
+        Set<Role> roles = getRoles();
+        return roles.stream().anyMatch(a -> a.getName().equals(role));
+    }
 }

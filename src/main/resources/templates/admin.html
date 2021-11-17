@@ -4,7 +4,7 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <link th:href="@{~/resources/css/bootstrap.min.css}" rel="stylesheet" type="text/css"/>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
     <title>All people</title>
 </head>
 <body>
@@ -21,12 +21,18 @@
             <div th:each="role :${user.getRoles()}" th:text="${role.getName()}"></div>
         </div>
 
-        <form class="col-4 list-buttons d-flex align-self-center align-items-center justify-content-end" th:action="@{/{id}(id=${user.getId()})}" th:object="${user}"
-              th:method="DELETE">
-            <a class="btn btn-primary mr-1" role="button" th:href="@{/admin/user/{id}(id=${user.getId()})}">Смотреть</a>
-            <a class="btn btn-primary mr-1" role="button" th:href="@{/admin/edit/{id}(id=${user.getId()})}">Изменить</a>
-            <input class="btn btn-danger" type="submit" value="Удалить"/>
-        </form>
+<!--        <form class="col-4 list-buttons d-flex align-self-center align-items-center justify-content-end" th:action="@{/admin/delete/{username}(username=${user.getFirstname()})}" th:object="${user}"-->
+<!--              th:method="DELETE">-->
+<!--            <a class="btn btn-primary mr-1" role="button" th:href="@{/admin/user/{id}(id=${user.getId()})}">Смотреть</a>-->
+<!--            <a class="btn btn-primary mr-1" role="button" th:href="@{/admin/edit/{username}(username=${user.getFirstname()})}">Изменить</a>-->
+<!--            <input class="btn btn-danger" type="submit" value="Удалить"/>-->
+<!--        </form>-->
+
+        <div class="col-4 list-buttons d-flex align-self-center align-items-center justify-content-end">
+            <a class="btn btn-primary mr-1" role="button" th:href="@{/admin/user/{username}(username=${user.getFirstname()})}">Смотреть</a>
+            <a class="btn btn-primary mr-1" role="button" th:href="@{/admin/edit/{username}(username=${user.getFirstname()})}">Изменить</a>
+            <a class="btn btn-danger" th:href="@{/admin/delete/{username}(username=${user.getFirstname()})}">Удалить</a>
+        </div>
     </div>
 
 

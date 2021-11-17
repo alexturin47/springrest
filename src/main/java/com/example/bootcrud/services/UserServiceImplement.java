@@ -14,8 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.bind.ValidationException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
@@ -59,10 +61,21 @@ public class UserServiceImplement implements UserService {
 
 
     @Override
-    public UserDto saveUser(UserDto userDto) throws ValidationException{
+    public void saveUser(UserDto userDto) throws ValidationException{
         validateUserDto(userDto);
-        User savedUser = userRepo.save(converter.fromUserDtotoUser(userDto));
-        return converter.fromUserToUserDto(savedUser);
+        userRepo.save(converter.fromUserDtotoUser(userDto));
+    }
+
+    @Override
+    public void updateUser(UserDto userDto) throws ValidationException{
+        validateUserDto(userDto);
+        User user = userRepo.getById(userDto.getId());
+        user.setFirstname(userDto.getFirstname());
+        user.setLastname(userDto.getLastname());
+        user.setPassword(userDto.getPassword());
+        user.setEmail(userDto.getEmail());
+        user.setRoles(userDto.getRoles());
+        userRepo.save(user);
     }
 
     @Override
@@ -78,6 +91,15 @@ public class UserServiceImplement implements UserService {
         }
         return null;
     }
+
+//    @Override
+//    public UserDto findById(Long id) {
+//        Optional<User> user = userRepo.findById(id);
+//        if (user != null) {
+//            return converter.fromUserToUserDto(user);
+//        }
+//        return null;
+//    }
 
     @Override
     public List<UserDto> findAll() {

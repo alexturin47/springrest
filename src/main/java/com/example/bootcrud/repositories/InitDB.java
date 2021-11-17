@@ -43,7 +43,7 @@ public class InitDB {
                     , "adminnov"
                     , "$2a$12$AFJsSpNrJlC04sp2qGPcYepkRMy6rs1k3hNxeTxRMj0qZJ/aUK6X2"
                     , "admin@mail.ru"
-                    , 35 , roles));
+                    , roles));
         } catch (Exception e) {
 
         }
@@ -57,7 +57,7 @@ public class InitDB {
                     , "userov"
                     , "$2a$12$wblAIp0iNog81E3RpCdwBuEZ6mqlSIJ/BFfUfFdf4p0y6naziXoGK"
                     , "user@mail.ru"
-                    , 38 , roles));
+                     , roles));
         } catch (Exception e) {
 
         }

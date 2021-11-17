@@ -13,9 +13,9 @@ public class UserConverter {
         user.setLastname(userDto.getLastname());
         user.setPassword(userDto.getPassword());
         user.setEmail(userDto.getEmail());
-        user.setAge(userDto.getAge());
+ //       user.setAge(userDto.getAge());
         user.setRoles(userDto.getRoles());
-        System.out.println(user.getFirstname()+" "+user.getLastname()+" "+user.getAge());
+//        System.out.println(user.getFirstname()+" "+user.getLastname()+" "+user.getAge());
         return user;
     }
 
@@ -26,10 +26,10 @@ public class UserConverter {
                 .lastname(user.getLastname())
                 .password(user.getPassword())
                 .email(user.getEmail())
-                .age(user.getAge())
+//                .age(user.getAge())
                 .roles(user.getRoles())
                 .build();
-        System.out.println(userDto.getFirstname()+" "+userDto.getLastname()+" "+userDto.getAge());
+ //       System.out.println(userDto.getFirstname()+" "+userDto.getLastname()+" "+userDto.getAge());
         return userDto;
     }
 }
