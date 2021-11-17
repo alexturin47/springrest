@@ -15,10 +15,11 @@
     </div>
     <div class="row justify-content-center mt-2">
         <div class="col-4">
-            <form th:action="@{/admin/}" th:method="POST" th:object="${user}">
+            <form th:action="@{/new}" th:method="POST" th:object="${user}">
                 <div class="form-group">
                     <label for="firstname">Пользователь</label>
                     <input class="form-control" type="text" th:field="*{firstname}" id="firstname"/>
+                    <p class="alert alert-danger" th:if="${#fields.hasErrors('firstname')}" th:errors="*{firstname}"></p>
                 </div>
                 <div class="form-group">
                     <label for="lastname">Фамилия</label>
@@ -27,17 +28,23 @@
                 <div class="form-group">
                     <label for="password">Пароль</label>
                     <input class="form-control" type="text" th:field="*{password}" id="password"/>
+                    <p class="alert alert-danger"  th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
                 </div>
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input class="form-control" type="text" id="email" th:field="*{email}"/>
+                    <p class="alert alert-danger"  th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
                 </div>
                 <div class="form-group">
                     <label>Select ROLE:</label>
                     <label for="editRoles">Select role:</label>
                     <select multiple size="2" name="roles" class="form-control" id="editRoles">
-                        <option th:each="role : ${roles}" th:text="${role.getName()}" th:value="${role.getId()}"></option>
+                        <option th:each="role : ${roles}"
+                                th:text="${role.getName()}"
+                                th:value="${role.getId()}"
+                                th:selected="${role.getName().equals('ROLE_USER')}"></option>
                     </select>
+                    <p class="alert alert-danger"  th:if="${#fields.hasErrors('roles')}" th:errors="*{roles}"></p>
                 </div>
 
                 <input  class="form-control btn btn-outline-primary" type="submit" value="Сохранить изменения"/>

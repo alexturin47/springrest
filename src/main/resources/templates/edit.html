@@ -15,11 +15,12 @@
     </div>
     <div class="row justify-content-center mt-3">
         <div class="col-4">
-            <form th:action="@{/admin/update/{id}(id=${user.getId()})}" th:method="PATCH" th:object="${user}">
+            <form th:action="@{/update/{username}(username=${user.getFirstname()})}" th:method="PATCH" th:object="${user}">
                 <label th:text="${user.getId()}"></label>
                 <div class="form-group">
                     <label for="firstname">Имя</label>
                     <input class="form-control" type="text" th:field="*{firstname}" id="firstname"/>
+                    <p class="alert alert-danger" th:if="${#fields.hasErrors('firstname')}" th:errors="*{firstname}"></p>
                 </div>
                 <div class="form-group">
                     <label for="lastname">Фамилия</label>
@@ -28,10 +29,12 @@
                 <div class="form-group">
                     <label for="password">Пароль</label>
                     <input class="form-control" type="text" th:field="*{password}" id="password"/>
+                    <p class="alert alert-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
                 </div>
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input class="form-control" type="text" id="email" th:field="*{email}"/>
+                    <p class="alert alert-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
                 </div>
                 <div class="form-group">
                     <label>Select ROLE:</label>

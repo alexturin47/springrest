@@ -61,19 +61,18 @@ public class UserServiceImplement implements UserService {
 
 
     @Override
-    public void saveUser(UserDto userDto) throws ValidationException{
-        validateUserDto(userDto);
+    public void saveUser(UserDto userDto){
         userRepo.save(converter.fromUserDtotoUser(userDto));
     }
 
     @Override
-    public void updateUser(UserDto userDto) throws ValidationException{
-        validateUserDto(userDto);
+    public void updateUser(UserDto userDto){
         User user = userRepo.getById(userDto.getId());
         user.setFirstname(userDto.getFirstname());
         user.setLastname(userDto.getLastname());
         user.setPassword(userDto.getPassword());
         user.setEmail(userDto.getEmail());
+        user.setAge(userDto.getAge());
         user.setRoles(userDto.getRoles());
         userRepo.save(user);
     }
@@ -92,14 +91,6 @@ public class UserServiceImplement implements UserService {
         return null;
     }
 
-//    @Override
-//    public UserDto findById(Long id) {
-//        Optional<User> user = userRepo.findById(id);
-//        if (user != null) {
-//            return converter.fromUserToUserDto(user);
-//        }
-//        return null;
-//    }
 
     @Override
     public List<UserDto> findAll() {
@@ -109,26 +100,26 @@ public class UserServiceImplement implements UserService {
                 .collect(Collectors.toList());
     }
 
-    private void validateUserDto(UserDto userDto) throws ValidationException{
-        if(isNull(userDto)) {
-            throw new ValidationException("Object user is null!");
-        }
-
-        if (isNull(userDto.getFirstname()) || userDto.getFirstname().isEmpty()) {
-
-            throw new ValidationException("Name is empty!");
-        }
-
-        if(isNull(userDto.getPassword()) || userDto.getPassword().isEmpty()) {
-            throw new ValidationException("Password is empty!");
-        }
-
-        if(isNull(userDto.getEmail()) || userDto.getEmail().isEmpty()) {
-            throw new ValidationException("Email is empty!");
-        }
-
-        if(isNull(userDto.getRoles()) || userDto.getRoles().isEmpty()) {
-            throw new ValidationException("Roles is empty!");
-        }
-    }
+//    private void validateUserDto(UserDto userDto) throws ValidationException{
+//        if(isNull(userDto)) {
+//            throw new ValidationException("Object user is null!");
+//        }
+//
+//        if (isNull(userDto.getFirstname()) || userDto.getFirstname().isEmpty()) {
+//
+//            throw new ValidationException("Name is empty!");
+//        }
+//
+//        if(isNull(userDto.getPassword()) || userDto.getPassword().isEmpty()) {
+//            throw new ValidationException("Password is empty!");
+//        }
+//
+//        if(isNull(userDto.getEmail()) || userDto.getEmail().isEmpty()) {
+//            throw new ValidationException("Email is empty!");
+//        }
+//
+//        if(isNull(userDto.getRoles()) || userDto.getRoles().isEmpty()) {
+//            throw new ValidationException("Roles is empty!");
+//        }
+//    }
 }

@@ -21,16 +21,9 @@
             <div th:each="role :${user.getRoles()}" th:text="${role.getName()}"></div>
         </div>
 
-<!--        <form class="col-4 list-buttons d-flex align-self-center align-items-center justify-content-end" th:action="@{/admin/delete/{username}(username=${user.getFirstname()})}" th:object="${user}"-->
-<!--              th:method="DELETE">-->
-<!--            <a class="btn btn-primary mr-1" role="button" th:href="@{/admin/user/{id}(id=${user.getId()})}">Смотреть</a>-->
-<!--            <a class="btn btn-primary mr-1" role="button" th:href="@{/admin/edit/{username}(username=${user.getFirstname()})}">Изменить</a>-->
-<!--            <input class="btn btn-danger" type="submit" value="Удалить"/>-->
-<!--        </form>-->
-
         <div class="col-4 list-buttons d-flex align-self-center align-items-center justify-content-end">
             <a class="btn btn-primary mr-1" role="button" th:href="@{/admin/user/{username}(username=${user.getFirstname()})}">Смотреть</a>
-            <a class="btn btn-primary mr-1" role="button" th:href="@{/admin/edit/{username}(username=${user.getFirstname()})}">Изменить</a>
+            <a class="btn btn-primary mr-1" role="button" th:href="@{/edit/{username}(username=${user.getFirstname()})}">Изменить</a>
             <a class="btn btn-danger" th:href="@{/admin/delete/{username}(username=${user.getFirstname()})}">Удалить</a>
         </div>
     </div>
@@ -38,7 +31,7 @@
 
     <div class="row justify-content-around mt-4">
         <div class="col-3 d-flex justify-content-end">
-            <a class="btn btn-primary align-self-center" href="/admin/new">Добавить пользователя</a>
+            <a class="btn btn-primary align-self-center" href="/new">Добавить пользователя</a>
         </div>
         <div class="col-3 d-flex justify-content-start">
             <a class="btn btn-primary align-self-center" href="/logout">Выйти</a>

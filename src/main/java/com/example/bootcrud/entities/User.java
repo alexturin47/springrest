@@ -20,6 +20,8 @@ public class User {
 
     private String email;
 
+    private int age;
+
     @ManyToMany
     @JoinTable(name="users_roles",
                joinColumns = @JoinColumn(name="user_id"),
@@ -28,11 +30,12 @@ public class User {
 
     public User(){}
 
-    public User(String firstname, String lastname, String password, String email, Set<Role> roles) {
+    public User(String firstname, String lastname, String password, String email, int age, Set<Role> roles) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.password = password;
         this.email = email;
+        this.age = age;
         this.roles = roles;
     }
 
@@ -84,4 +87,13 @@ public class User {
         this.roles = roles;
     }
 
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
 }
+
+
