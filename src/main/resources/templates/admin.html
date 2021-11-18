@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org"
-      xmlns="http://www.w3.org/1999/xhtml">
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
@@ -10,7 +11,12 @@
 <body>
 
 <h3 class="title  mt-2 text-center">Список пользователей</h3>
-<div class="container">
+<div class="container-fluid">
+
+    <div class="navbar-dark">
+        <p><span sec:authentication="name"></span> with roles: <span sec:authentication="principal.roles.name"></span> </p>
+        <a href="/logout">Logout</a>
+    </div>
 
     <div class="row align-content-center bg-light border border-info mt-3 mb-1" th:each="user : ${users}">
         <div class="col-2 align-self-center" th:text="${user.getFirstname()}"></div>

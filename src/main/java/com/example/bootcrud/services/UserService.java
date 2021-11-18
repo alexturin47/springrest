@@ -11,7 +11,10 @@ public interface UserService extends UserDetailsService {
 
     void saveUser(UserDto userDto) throws ValidationException;
     void deleteUser(Long id);
-    UserDto findByUsername(String username);
+ //   UserDto findByUsername(String username);
+
+    UserDto findByEmail(String email);
+
     List<UserDto> findAll();
     void updateUser(UserDto userDto) throws ValidationException;
 

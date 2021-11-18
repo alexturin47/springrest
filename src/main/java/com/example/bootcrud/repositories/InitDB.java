@@ -35,7 +35,7 @@ public class InitDB {
         }
 
         Set<Role> roles;
-        User admin = userRepo.findByFirstname("admin");
+        User admin = userRepo.findByEmail("admin@mail.ru");
         if ( admin == null ) {
 
             roles = new HashSet<>();
@@ -50,7 +50,7 @@ public class InitDB {
         }
 
 
-        User user = userRepo.findByFirstname("user");
+        User user = userRepo.findByEmail("user@mail.ru");
         if ( user == null ) {
             roles = new HashSet<>();
             roles.add(roleRepo.findByname("ROLE_USER"));

@@ -38,20 +38,20 @@ public class UserServiceImplement implements UserService {
         this.userRepo = userRepo;
     }
 
-    public User findByFirstname(String firstname) {
-        return userRepo.findByFirstname(firstname);
-    }
+//    public User findByFirstname(String firstname) {
+//        return userRepo.findByFirstname(firstname);
+//    }
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        User user = findByFirstname(s);
+        User user = userRepo.findByEmail(s);
         if(user == null) {
             throw new UsernameNotFoundException(String.format("User %s not found", s));
         }
 
 
-        return new org.springframework.security.core.userdetails.User(user.getFirstname(), user.getPassword()
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword()
                     , mapRoleToAuthorities(user.getRoles()));
     }
 
@@ -83,8 +83,8 @@ public class UserServiceImplement implements UserService {
     }
 
     @Override
-    public UserDto findByUsername(String username) {
-        User user = userRepo.findByFirstname(username);
+    public UserDto findByEmail(String email) {
+        User user = userRepo.findByEmail(email);
         if (user != null) {
             return converter.fromUserToUserDto(user);
         }

@@ -37,11 +37,15 @@ public class MainController {
         return "redirect:/login";
     }
 
+    @RequestMapping(value = "login", method = RequestMethod.GET)
+    public String loginPage() {
+        return "login";
+    }
 
     // перенаправление в зависимости от роли
     @GetMapping("/authorized")
     public String pageForAuthenticatedUsers(Principal principal) {
-        UserDto user = userService.findByUsername(principal.getName());
+        UserDto user = userService.findByEmail(principal.getName());
         if(user.hasAuthorities("ROLE_ADMIN")) {
             return "redirect:admin";
         } else {
@@ -62,7 +66,7 @@ public class MainController {
     // редактирование юзера
     @GetMapping("/edit/{username}")
     public String edit(Model model, @PathVariable("username") String username) {
-        model.addAttribute("user", userService.findByUsername(username));
+        model.addAttribute("user", userService.findByEmail(username));
         model.addAttribute("roles", roleServce.index());
         return "/edit";
     }
@@ -76,7 +80,7 @@ public class MainController {
         if(bindingResult.hasErrors()) {
             return "/edit/{username}";
         }
-        userDto.setId(userService.findByUsername(username).getId());
+        userDto.setId(userService.findByEmail(username).getId());
         userDto.setRoles(roleServce.getRoleSet(roles));
         userService.updateUser(userDto);
         return "redirect:/authorized";
@@ -111,7 +115,7 @@ public class MainController {
     // удаление пользователя
     @GetMapping("/admin/delete/{username}")
     public String confirmDelete(@PathVariable("username") String username, Model model) {
-        model.addAttribute("user", userService.findByUsername(username));
+        model.addAttribute("user", userService.findByEmail(username));
         model.addAttribute("roles", roleServce.index());
         return "/delete";
     }
@@ -126,7 +130,7 @@ public class MainController {
     //  показ старницы профиля для админа
     @GetMapping("/admin/user/{username}")
     public String showUser(Model model, Principal principal, @PathVariable("username") String name) {
-        model.addAttribute("user", userService.findByUsername(name));
+        model.addAttribute("user", userService.findByEmail(name));
         model.addAttribute("roles", roleServce.index());
         return "/user";
     }
@@ -134,7 +138,7 @@ public class MainController {
     //  показ старницы профиля для админа
     @GetMapping("/user")
     public String pageForReadProfile(Principal principal, Model model) {
-        UserDto user = userService.findByUsername(principal.getName());
+        UserDto user = userService.findByEmail(principal.getName());
         model.addAttribute("roles", roleServce.index());
         model.addAttribute("user", user);
         return "/user";
