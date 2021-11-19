@@ -46,9 +46,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/login").anonymous()
                 .antMatchers("/authorized").authenticated()
-                .antMatchers("/admin/**").hasAnyRole("ADMIN")
-                .antMatchers("/user/**").hasAnyRole("USER", "ADMIN")
-                .antMatchers("/**").permitAll();
+                .antMatchers("/resources/**").permitAll()
+                .antMatchers("/admin/**").hasAuthority("ADMIN")
+                .antMatchers("/user/**").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
+                .antMatchers("/**").permitAll()
+                ;
 
     }
 
@@ -69,6 +71,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //    public void configure(WebSecurity web) throws Exception {
 //        web
 //                .ignoring()
-//                .antMatchers("/resources/**");
+//                .antMatchers("/resources/**").anyRequest();
 //    }
 }

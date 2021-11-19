@@ -10,42 +10,91 @@
 </head>
 <body>
 
-<h3 class="title  mt-2 text-center">Список пользователей</h3>
-<div class="container-fluid">
+<div class="container-fluid pl-0 pr-0">
 
-    <div class="navbar-dark">
-        <p><span sec:authentication="name"></span> with roles: <span sec:authentication="principal.roles.name"></span> </p>
-        <a href="/logout">Logout</a>
+    <nav class="navbar navbar-dark bg-dark text-light">
+        <div>
+            <span class="font-weight-bold color text-light" sec:authentication="name"></span> with roles:
+            <span class="text-light" sec:authentication="principal.authorities"></span>
+        </div>
+        <a href="/logout" class="text-white-50 text-decoration-none ml-auto">Logout</a>
+    </nav>
+
+    <div class="row">
+        <div class="col-2">
+            <ul class="nav flex-column pt-2">
+                <li>
+                    <a href="/admin" class="btn btn-primary btn-block text-left">Admin</a>
+                </li>
+                <li>
+                    <a href="/user" class="btn btn-outline btn-block text-left">User</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-10">
+            <h1 class="mt-2">Admin panel</h1>
+
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <h4>All users</h4>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">First Name</th>
+                                    <th scope="col">Last Name</th>
+                                    <th scope="col">Age</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Role</th>
+                                    <th scope="col">Edit</th>
+                                    <th scope="col">Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="user:${users}">
+                                    <th scope="row" th:text="${user.getId()}"></th>
+                                    <td th:text="${user.getFirstname()}"></td>
+                                    <td th:text="${user.getLastname()}"></td>
+                                    <td th:text="${user.getAge()}"></td>
+                                    <td th:text="${user.getEmail()}"></td>
+                                    <td th:text="${#strings.setJoin(user.getRoles(), ' ')}">
+<!--                                        <span th:each="role :${user.getRoles()}" th:text="${role.getName()} + ' '"></span>-->
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-primary mr-1" role="button" th:href="@{/edit/{username}(username=${user.getFirstname()})}">Изменить</a>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-danger" th:href="@{/admin/delete/{username}(username=${user.getFirstname()})}">Удалить</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                </div>
+                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    User panel
+                </div>
+            </div>
+
+
+        </div>
     </div>
-
-    <div class="row align-content-center bg-light border border-info mt-3 mb-1" th:each="user : ${users}">
-        <div class="col-2 align-self-center" th:text="${user.getFirstname()}"></div>
-        <div class="col-2 align-self-center" th:text="${user.getLastname()}"></div>
-        <div class="col-2 align-self-center" th:text="${user.getEmail()}"></div>
-<!--        <div class="col-1 align-self-center" th:text="${user.getAge()}"></div>-->
-        <div class="col-2 align-self-center bg-info">
-            <div th:each="role :${user.getRoles()}" th:text="${role.getName()}"></div>
-        </div>
-
-        <div class="col-4 list-buttons d-flex align-self-center align-items-center justify-content-end">
-            <a class="btn btn-primary mr-1" role="button" th:href="@{/admin/user/{username}(username=${user.getFirstname()})}">Смотреть</a>
-            <a class="btn btn-primary mr-1" role="button" th:href="@{/edit/{username}(username=${user.getFirstname()})}">Изменить</a>
-            <a class="btn btn-danger" th:href="@{/admin/delete/{username}(username=${user.getFirstname()})}">Удалить</a>
-        </div>
-    </div>
-
-
-    <div class="row justify-content-around mt-4">
-        <div class="col-3 d-flex justify-content-end">
-            <a class="btn btn-primary align-self-center" href="/new">Добавить пользователя</a>
-        </div>
-        <div class="col-3 d-flex justify-content-start">
-            <a class="btn btn-primary align-self-center" href="/logout">Выйти</a>
-        </div>
-
-    </div>
-
 </div>
+
+<script
+        src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 </body>
 <style>
     .row{
