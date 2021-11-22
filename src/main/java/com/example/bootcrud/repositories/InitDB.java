@@ -56,7 +56,7 @@ public class InitDB {
             roles.add(roleRepo.findByname("USER"));
             userRepo.save(new User("user"
                     , "userov"
-                    , "$2a$12$wblAIp0iNog81E3RpCdwBuEZ6mqlSIJ/BFfUfFdf4p0y6naziXoGK"
+                    , "$2y$12$wxbc/a4cb2t.s26ye.W0qew6JGXqi.fKtPvTIv9/7jww6U2eLSda."
                     , "user@mail.ru"
                     , 30
                     , roles));
@@ -66,11 +66,13 @@ public class InitDB {
 
 /*
 CREATE table users(
-id bigint auto_increment primary key ,
-username varchar(50) not null ,
-password varchar(60) not null ,
-email varchar(50) UNIQUE,
-age int
+ id bigint NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ firstname varchar(50) NOT NULL,
+ password varchar(68) NOT NULL,
+ email varchar(50) NOT NULL,
+ lastname varchar(50) NOT NULL,
+ age int NOT NULL,
+ UNIQUE KEY `users_email_uindex` (`email`)
 );
 
 create table role(
@@ -86,3 +88,4 @@ foreign key (user_id) references users(id),
 foreign key (role_id) references role(id)
 );
 */
+

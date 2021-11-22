@@ -1,56 +1,82 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-    <title>Профиль пользователя</title>
+    <title>User page</title>
 </head>
 <body>
 
-<div class="container mt-3">
-    <h3 class="text-center">Профиль пользователя</h3>
-    <div class="row justify-content-center mt-3">
-        <div class="col-4">
-            <form th:object="${user}">
-                <div class="form-group">
-                    <label for="firstname">Пользователь</label>
-                    <input class="form-control" type="text" th:field="*{firstname}" id="firstname" disabled/>
-                </div>
-                <div class="form-group">
-                    <label for="lastname">Фамилия</label>
-                    <input class="form-control" type="text" th:field="*{lastname}" id="lastname" disabled/>
-                </div>
-                <div class="form-group">
-                    <label for="password">Пароль</label>
-                    <input class="form-control" type="password" th:field="*{password}" id="password" disabled/>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input class="form-control" type="text" id="email" th:field="*{email}" disabled/>
-                </div>
-                <div class="form-group">
-                    <label>ROLES:</label>
-                    <select multiple size="2" name="roles" class="form-control" id="editRoles" disabled>
-                        <option th:each="role : ${roles}"
-                                th:text="${role.getName()}"
-                                th:value="${role.getId()}"
-                                th:selected="${user.hasAuthorities('__${role.getName}__')}"
-                        >
-                        </option>
-                    </select>
-                </div>
-            </form>
+<div class="">
+
+    <nav class="navbar navbar-dark bg-dark text-light">
+        <div>
+            <span class="font-weight-bold color text-light" sec:authentication="name"></span> with roles:
+            <span class="text-light" sec:authentication="principal.authorities"></span>
         </div>
-    </div>
-    <div class="row justify-content-center mt-3">
-        <div class="col-4 d-flex justify-content-center" >
-            <a href="/logout" type="button" class="btn btn-primary">Выйти</a>
-            <a href="/admin" type="button" class="btn btn-primary ml-auto" sec:authorize="hasRole('ADMIN')">Вернутся</a>
+        <a href="/logout" class="text-white-50 text-decoration-none ml-auto">Logout</a>
+    </nav>
+
+    <div class="row m-0">
+        <div class="col-2 pl-0 pr-0">
+            <ul class="nav flex-column pt-2">
+                <li>
+                    <a href="/user" class="btn btn-primary btn-block text-left">User</a>
+                </li>
+            </ul>
         </div>
-    </div>
+        <div class="col-10 bg-light pr-4 pl-4">
+            <h1 class="mt-2">User information-page</h1>
+
+            <div class="tab-content border mr-4 mt-4" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <h4 class="pl-4 pt-2 pb-3 mb-0 bg-light border-bottom">About user</h4>
+                    <div class="p-4 bg-white">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">First Name</th>
+                                <th scope="col">Last Name</th>
+                                <th scope="col">Age</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Role</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th scope="row" th:text="${user.getId()}"></th>
+                                <td th:text="${user.getFirstname()}"></td>
+                                <td th:text="${user.getLastname()}"></td>
+                                <td th:text="${user.getAge()}"></td>
+                                <td th:text="${user.getEmail()}"></td>
+                                <td th:text="${#strings.setJoin(user.getRoles(), ' ')}">
+                                </td>
+
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
 
+                </div>
+            </div>
+
+
+        </div>
+    </div>
 </div>
+
+
+<script
+        src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
 </body>
 </html>

@@ -2,7 +2,7 @@ package com.example.bootcrud.controllers;
 
 import com.example.bootcrud.dto.UserDto;
 import com.example.bootcrud.entities.User;
-import com.example.bootcrud.services.RoleServce;
+import com.example.bootcrud.services.RoleService;
 import com.example.bootcrud.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,12 +18,12 @@ import java.security.Principal;
 public class MainController {
 
     private final UserService userService;
-    private final RoleServce roleServce;
+    private final RoleService roleService;
 
     @Autowired
-    public MainController(UserService userService, RoleServce roleServce) {
+    public MainController(UserService userService, RoleService roleService) {
         this.userService = userService;
-        this.roleServce = roleServce;
+        this.roleService = roleService;
     }
 
     @GetMapping("favicon.ico")
@@ -43,47 +43,44 @@ public class MainController {
     }
 
     // перенаправление в зависимости от роли
-    @GetMapping("/authorized")
-    public String pageForAuthenticatedUsers(Principal principal) {
-        UserDto user = userService.findByEmail(principal.getName());
-        if(user.hasAuthorities("ADMIN")) {
-            return "redirect:admin";
-        } else {
-            return "redirect:user";
-        }
-    }
+//    @GetMapping("/authorized")
+//    public String pageForAuthenticatedUsers(Principal principal) {
+//        UserDto user = userService.findByEmail(principal.getName());
+//        if(user.hasAuthorities("ADMIN")) {
+//            return "redirect:admin";
+//        } else {
+//            return "redirect:user";
+//        }
+//    }
 
 
     // вызов страницы админа
     @GetMapping("/admin")
-    public String adminPage(Model model, @ModelAttribute("user") User user) {
+    public String adminPage(Model model, @ModelAttribute("user") User user, Principal principal) {
         model.addAttribute("users", userService.findAll());
-        model.addAttribute("roles", roleServce.index());
+        model.addAttribute("roles", roleService.index());
+        model.addAttribute("owner", userService.findByEmail(principal.getName()));
         return "admin";
     }
 
 
     // редактирование юзера
-    @GetMapping("/edit/{username}")
-    public String edit(Model model, @PathVariable("username") String username) {
-        model.addAttribute("user", userService.findByEmail(username));
-        model.addAttribute("roles", roleServce.index());
-        return "/edit";
-    }
+//    @GetMapping("/edit/{username}")
+//    public String edit(Model model, @PathVariable("username") String username) {
+//        model.addAttribute("user", userService.findByEmail(username));
+//        model.addAttribute("roles", roleServce.index());
+//        return "/edit";
+//    }
 
-    @PatchMapping( "/update/{username}")
-    public String updateAdmin(@ModelAttribute("user") @Valid UserDto userDto
-            ,BindingResult bindingResult
-            , @PathVariable("username") String username
+    @PatchMapping( "/{email}")
+    public String updateAdmin(@ModelAttribute("user") UserDto userDto
+            , @PathVariable("email") String email
             ,@RequestParam("roles") String[] roles) throws ValidationException {
 
-        if(bindingResult.hasErrors()) {
-            return "/edit/{username}";
-        }
-        userDto.setId(userService.findByEmail(username).getId());
-        userDto.setRoles(roleServce.getRoleSet(roles));
+        userDto.setId(userService.findByEmail(email).getId());
+        userDto.setRoles(roleService.getRoleSet(roles));
         userService.updateUser(userDto);
-        return "redirect:/authorized";
+        return "redirect:/admin";
     }
 
 
@@ -92,21 +89,15 @@ public class MainController {
     @GetMapping("/new")
     public String newUser(Model model) {
         model.addAttribute("user", new UserDto());
-        model.addAttribute("roles", roleServce.index());
+        model.addAttribute("roles", roleService.index());
         return "/new";
     }
 
     @PostMapping("/new")
-    public String create(Model model, @ModelAttribute("user") @Valid UserDto userDto
-            , BindingResult bindingResult
-            , @RequestParam(name = "roles", required = false) @Valid String[] roles) throws ValidationException {
+    public String create(Model model, @ModelAttribute("user") UserDto userDto
+            , @RequestParam(name = "roles", required = false) String[] roles) throws ValidationException {
 
-        if(bindingResult.hasErrors()) {
-            model.addAttribute("roles", roleServce.index());
-            return "/admin#new";
-        }
-
-        userDto.setRoles(roleServce.getRoleSet(roles));
+        userDto.setRoles(roleService.getRoleSet(roles));
         userService.saveUser(userDto);
         return "redirect:/admin";
     }
@@ -121,20 +112,20 @@ public class MainController {
 
 
     //  показ старницы профиля для админа
-    @GetMapping("/admin/user/{username}")
-    public String showUser(Model model, Principal principal, @PathVariable("username") String name) {
-        model.addAttribute("user", userService.findByEmail(name));
-        model.addAttribute("roles", roleServce.index());
-        return "/user";
-    }
+//    @GetMapping("/admin/user/{username}")
+//    public String showUser(Model model, Principal principal, @PathVariable("username") String name) {
+//        model.addAttribute("user", userService.findByEmail(name));
+//        model.addAttribute("roles", roleService.index());
+//        return "/user";
+//    }
 
-    //  показ старницы профиля для админа
+    //  показ старницы профиля для юзера
     @GetMapping("/user")
     public String pageForReadProfile(Principal principal, Model model) {
         UserDto user = userService.findByEmail(principal.getName());
-        model.addAttribute("roles", roleServce.index());
+        model.addAttribute("roles", roleService.index());
         model.addAttribute("user", user);
-        return "/user";
+        return "user";
     }
 
 }

@@ -10,7 +10,7 @@ import java.util.HashSet;
 
 @Component
 @Transactional
-public class RoleServiceImpl implements RoleServce {
+public class RoleServiceImpl implements RoleService {
 
     @Autowired
     private RoleRepo roleRepo;

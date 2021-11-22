@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 
 @Service
-public interface RoleServce {
+public interface RoleService {
 
     Role findByname(String rolename);
 

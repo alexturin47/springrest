@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,8 @@ public class UserServiceImplement implements UserService {
 
     private UserRepo userRepo;
     private UserConverter converter;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     public void setConverter(UserConverter converter) {
@@ -70,7 +73,9 @@ public class UserServiceImplement implements UserService {
         User user = userRepo.getById(userDto.getId());
         user.setFirstname(userDto.getFirstname());
         user.setLastname(userDto.getLastname());
-        user.setPassword(userDto.getPassword());
+        if(!user.getPassword().equals(userDto.getPassword())) {
+            user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        }
         user.setEmail(userDto.getEmail());
         user.setAge(userDto.getAge());
         user.setRoles(userDto.getRoles());
