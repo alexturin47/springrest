@@ -103,7 +103,7 @@ public class MainController {
 
         if(bindingResult.hasErrors()) {
             model.addAttribute("roles", roleServce.index());
-            return "/new";
+            return "/admin#new";
         }
 
         userDto.setRoles(roleServce.getRoleSet(roles));
@@ -112,13 +112,6 @@ public class MainController {
     }
 
 
-    // удаление пользователя
-    @GetMapping("/admin/delete/{username}")
-    public String confirmDelete(@PathVariable("username") String username, Model model) {
-        model.addAttribute("user", userService.findByEmail(username));
-        model.addAttribute("roles", roleServce.index());
-        return "/delete";
-    }
 
     @DeleteMapping( "/{id}")
     public String delete(@PathVariable("id") Long id) {

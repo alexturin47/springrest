@@ -16,8 +16,8 @@ public class UserDto {
     @Size(min = 2, max = 30, message ="Имя должно быть в диапазоне 2 - 30 символов")
     private String firstname;
     private String lastname;
-    @NotEmpty(message = "Пароль не может быть пустым")
-    @Size(min = 4, message = "Длина пароля не менее 4 символов")
+//    @NotEmpty(message = "Пароль не может быть пустым")
+//    @Size(min = 4, message = "Длина пароля не менее 4 символов")
     private String password;
     @NotEmpty(message = "Email не может быть пустым")
     @Email(message = "Не валидный Email")

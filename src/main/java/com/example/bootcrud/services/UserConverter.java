@@ -2,16 +2,21 @@ package com.example.bootcrud.services;
 
 import com.example.bootcrud.dto.UserDto;
 import com.example.bootcrud.entities.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UserConverter {
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     public User fromUserDtotoUser(UserDto userDto) {
         User user = new User();
         user.setFirstname(userDto.getFirstname());
         user.setLastname(userDto.getLastname());
-        user.setPassword(userDto.getPassword());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setEmail(userDto.getEmail());
         user.setAge(userDto.getAge());
         user.setRoles(userDto.getRoles());
