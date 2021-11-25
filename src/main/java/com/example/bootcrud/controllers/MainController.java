@@ -1,24 +1,30 @@
 package com.example.bootcrud.controllers;
 
 import com.example.bootcrud.dto.UserDto;
-import com.example.bootcrud.entities.User;
+import com.example.bootcrud.entities.Role;
 import com.example.bootcrud.services.RoleService;
 import com.example.bootcrud.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import javax.xml.bind.ValidationException;
 import java.security.Principal;
+import java.util.*;
 
+@CrossOrigin
 @Controller
+@RequestMapping("/")
 public class MainController {
 
     private final UserService userService;
     private final RoleService roleService;
+    private List<Map<String, String>> messages = new ArrayList<Map<String, String>>() {{
+        add(new HashMap<String, String>() {{put("id", "1"); put("text", "message 1");}});
+        add(new HashMap<String, String>() {{put("id", "2"); put("text", "message 2");}});
+        add(new HashMap<String, String>() {{put("id", "3"); put("text", "message 3");}});
+    }};
 
     @Autowired
     public MainController(UserService userService, RoleService roleService) {
@@ -55,12 +61,26 @@ public class MainController {
 
 
     // вызов страницы админа
+//    @GetMapping("/admin")
+//    public String adminPage(Model model, @ModelAttribute("user") User user, Principal principal) {
+//        model.addAttribute("users", userService.findAll());
+//        model.addAttribute("roles", roleService.index());
+//        model.addAttribute("owner", userService.findByEmail(principal.getName()));
+//        return "_admin_old";
+//    }
+
     @GetMapping("/admin")
-    public String adminPage(Model model, @ModelAttribute("user") User user, Principal principal) {
-        model.addAttribute("users", userService.findAll());
-        model.addAttribute("roles", roleService.index());
-        model.addAttribute("owner", userService.findByEmail(principal.getName()));
+    public String admin(Principal principal) {
         return "admin";
+    }
+    @RequestMapping(value = "admin/all", method = RequestMethod.GET)
+    public @ResponseBody List<UserDto> allList() {
+        return userService.findAll();
+    }
+
+    @RequestMapping(value = "admin/roles", method = RequestMethod.GET)
+    public @ResponseBody Set<Role> roleSet() {
+        return roleService.index();
     }
 
 
@@ -85,21 +105,26 @@ public class MainController {
 
 
 
-    // созадние нового юзера
-    @GetMapping("/new")
-    public String newUser(Model model) {
-        model.addAttribute("user", new UserDto());
-        model.addAttribute("roles", roleService.index());
-        return "/new";
-    }
+//    // созадние нового юзера
+//    @GetMapping("/new")
+//    public String newUser(Model model) {
+//        model.addAttribute("user", new UserDto());
+//        model.addAttribute("roles", roleService.index());
+//        return "/new";
+//    }
 
-    @PostMapping("/new")
-    public String create(Model model, @ModelAttribute("user") UserDto userDto
-            , @RequestParam(name = "roles", required = false) String[] roles) throws ValidationException {
+//    @PostMapping("/new")
+//    public String create(Model model, @ModelAttribute("user") UserDto userDto
+//            , @RequestParam(name = "roles", required = false) String[] roles) throws ValidationException {
+//
+//        userDto.setRoles(roleService.getRoleSet(roles));
+//        userService.saveUser(userDto);
+//        return "redirect:/admin";
+//    }
 
-        userDto.setRoles(roleService.getRoleSet(roles));
-        userService.saveUser(userDto);
-        return "redirect:/admin";
+    @PostMapping("/admin/save")
+    public void save(@RequestBody UserDto userDto) {
+        System.out.println(userDto);
     }
 
 

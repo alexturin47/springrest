@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <title>All people</title>
+</head>
+<body>
+
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">ID</th>
+        <th scope="col">First Name</th>
+        <th scope="col">Last Name</th>
+        <th scope="col">Age</th>
+        <th scope="col">Email</th>
+        <th scope="col">Role</th>
+        <th scope="col">Edit</th>
+        <th scope="col">Delete</th>
+    </tr>
+    </thead>
+    <tbody id="tbodyall">
+
+    </tbody>
+</table>
+
+
+<script
+        src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous">
+
+</script>
+
+<script>
+    $(document).ready(function () {
+        let url = 'http://localhost:8080/admin/all';
+        fetch(url).then(function(response) {
+            response.json().then(function(json) {
+                console.log(json);
+                $.each(json, function(i, user) {
+                    let $tr = $('<tr>').append(
+                              $('<td>').text(user.id),
+                              $('<td>').text(user.firstname),
+                        $('<td>').text(user.lastname),
+                        $('<td>').text(user.age),
+                        $('<td>').text(user.email),
+                        $('<td>').text(user.roles.map(r => r.name).join(" ")),
+                        $('<td>').html('<button type="button" class="btn btn-info" data-toggle="modal" data-target="#editModal"' +
+                            '           data-user-email=${user.email}>Edit</button>'),
+                        $('<td>').html('<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal"\n' +
+                            '                    th:data-user-email=${user.email}>Delete</button>')
+
+                    ).appendTo('#tbodyall');
+                });
+            });
+        });
+
+
+    })
+
+
+</script>
+</body>
+</html>
