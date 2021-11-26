@@ -8,43 +8,35 @@
     <div class="container mt-3">
         <div class="row justify-content-center mt-3">
             <div class="col-7">
-                <form th:action="@{/{id}(id=${deleteUser.getId()})}"
-                      th:object="${deleteUser}"
-                      th:method="DELETE"
-                      id="delete-form"
-                      class="text-center"
-                >
+                <form id="delete-form" class="text-center">
                     <div class="form-group">
                         <label for="id">ID</label>
-                        <input class="form-control" type="text" th:field="*{id}" id="id" disabled/>
+                        <input class="form-control" type="text" id="id" disabled/>
                     </div>
                     <div class="form-group">
                         <label for="firstname">Firstname</label>
-                        <input class="form-control" type="text" th:field="*{firstname}" id="firstname" disabled/>
+                        <input class="form-control" type="text"  id="firstname" disabled/>
                     </div>
                     <div class="form-group">
                         <label for="lastname">Lastname</label>
-                        <input class="form-control" type="text" th:field="*{lastname}" id="lastname" disabled/>
+                        <input class="form-control" type="text"  id="lastname" disabled/>
                     </div>
                     <div class="form-group">
                         <label for="age">Age</label>
-                        <input class="form-control" type="text" id="age" th:field="*{email}" disabled/>
+                        <input class="form-control" type="text" id="age" disabled/>
                     </div>
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input class="form-control" type="text" id="email" th:field="*{email}" disabled/>
+                        <input class="form-control" type="text" id="email"  disabled/>
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input class="form-control" type="password" th:field="*{password}" id="password" disabled/>
+                        <input class="form-control" type="password"  id="password" disabled/>
                     </div>
                     <div class="form-group">
                         <label>ROLES:</label>
                         <select multiple size="2" name="roles" class="form-control" id="editRoles" disabled>
-                            <option th:each="role : ${deleteUser.getRoles()}"
-                                    th:text="${role.getName()}"
-                            >
-                            </option>
+
                         </select>
                     </div>
                 </form>

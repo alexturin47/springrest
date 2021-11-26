@@ -48,37 +48,17 @@ public class MainController {
         return "login";
     }
 
-    // перенаправление в зависимости от роли
-//    @GetMapping("/authorized")
-//    public String pageForAuthenticatedUsers(Principal principal) {
-//        UserDto user = userService.findByEmail(principal.getName());
-//        if(user.hasAuthorities("ADMIN")) {
-//            return "redirect:admin";
-//        } else {
-//            return "redirect:user";
-//        }
-//    }
-
-
-    // вызов страницы админа
-//    @GetMapping("/admin")
-//    public String adminPage(Model model, @ModelAttribute("user") User user, Principal principal) {
-//        model.addAttribute("users", userService.findAll());
-//        model.addAttribute("roles", roleService.index());
-//        model.addAttribute("owner", userService.findByEmail(principal.getName()));
-//        return "_admin_old";
-//    }
 
     @GetMapping("/admin")
     public String admin(Principal principal) {
         return "admin";
     }
-    @RequestMapping(value = "admin/all", method = RequestMethod.GET)
+    @RequestMapping(value = "admin:all", method = RequestMethod.GET)
     public @ResponseBody List<UserDto> allList() {
         return userService.findAll();
     }
 
-    @RequestMapping(value = "admin/roles", method = RequestMethod.GET)
+    @RequestMapping(value = "admin:roles", method = RequestMethod.GET)
     public @ResponseBody Set<Role> roleSet() {
         return roleService.index();
     }
@@ -91,6 +71,7 @@ public class MainController {
 //        model.addAttribute("roles", roleServce.index());
 //        return "/edit";
 //    }
+
 
     @PatchMapping( "/{email}")
     public String updateAdmin(@ModelAttribute("user") UserDto userDto
@@ -122,11 +103,12 @@ public class MainController {
 //        return "redirect:/admin";
 //    }
 
-    @PostMapping("/admin/save")
-    public void save(@RequestBody UserDto userDto) {
-        System.out.println(userDto);
+    @PostMapping("admin:UserDto")
+    public @ResponseBody UserDto save(@RequestBody UserDto userDto) throws ValidationException {
+        userService.saveUser(userDto);
+        userDto.setId(userService.findByEmail(userDto.getEmail()).getId());
+        return userDto;
     }
-
 
 
     @DeleteMapping( "/{id}")
@@ -135,14 +117,6 @@ public class MainController {
         return "redirect:/admin";
     }
 
-
-    //  показ старницы профиля для админа
-//    @GetMapping("/admin/user/{username}")
-//    public String showUser(Model model, Principal principal, @PathVariable("username") String name) {
-//        model.addAttribute("user", userService.findByEmail(name));
-//        model.addAttribute("roles", roleService.index());
-//        return "/user";
-//    }
 
     //  показ старницы профиля для юзера
     @GetMapping("/user")
