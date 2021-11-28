@@ -10,7 +10,7 @@ import java.util.List;
 public interface UserService extends UserDetailsService {
 
     void saveUser(UserDto userDto) throws ValidationException;
-    void deleteUser(Long id);
+    boolean deleteUser(Long id);
  //   UserDto findByUsername(String username);
 
     UserDto findByEmail(String email);

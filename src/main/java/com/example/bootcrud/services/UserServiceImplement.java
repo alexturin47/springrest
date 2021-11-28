@@ -83,8 +83,14 @@ public class UserServiceImplement implements UserService {
     }
 
     @Override
-    public void deleteUser(Long id) {
-        userRepo.deleteById(id);
+    @Transactional
+    public boolean deleteUser(Long id) {
+        try {
+            userRepo.deleteById(id);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 
     @Override

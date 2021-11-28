@@ -140,17 +140,33 @@
 
         function insertUserRow(user) {
             let $tr = $('<tr>').append(
-                $('<td>').text(user.id),
-                $('<td>').text(user.firstname),
-                $('<td>').text(user.lastname),
-                $('<td>').text(user.age),
-                $('<td>').text(user.email).attr('data-user-email', user.email),
-                $('<td>').text(user.roles.map(r => r.name).join(" ")),
-                $('<td>').html(`<button type="button" class="btn btn-info" data-toggle="modal" data-target="#editModal"` +
+                $('<td>').text(user.id).attr('data-id','id'),
+                $('<td>').text(user.firstname).attr('data-id','firstname'),
+                $('<td>').text(user.lastname).attr('data-id','lastname'),
+                $('<td>').text(user.age).attr('data-id','age'),
+                $('<td>').text(user.email).attr('data-user-email', user.email).prop('data-id','email'),
+                $('<td>').text(user.roles.map(r => r.name).join(" ")).attr('data-id','roles'),
+                $('<td>').attr('data-id','btnEdit').html(`<button type="button" class="btn btn-info" data-toggle="modal" data-target="#editModal"` +
                     `           data-user-email="${user.email}">Edit</button>`),
-                $('<td>').html(`<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal"` +
+                $('<td>').attr('data-id','btnDelete').html(`<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal"` +
                     `                    data-user-email="${user.email}">Delete</button>`)
             ).appendTo('#tbodyall');
+        }
+
+        function editRow(user){
+            let $row = $(`table td:contains("${user.id}")`).parent();
+
+                $row.children(`td[data-id=firstname]`).text(user.firstname),
+                    $row.children(`td[data-id=lastname]`).text(user.lastname),
+                    $row.children(`td[data-id=age]`).text(user.age),
+                    $row.children(`td[data-id=email]`).text(user.email).attr('data-user-email', user.email),
+                    $row.children(`td[data-id=roles]`).text(user.roles.map(r => r.name).join(" ")),
+                    $row.children(`td[data-id=btnEdit]`).html(`<button type="button" class="btn btn-info" data-toggle="modal" data-target="#editModal"` +
+                    `           data-user-email="${user.email}">Edit</button>`),
+                    $row.children(`td[data-id=btnDelete]`).html(`<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal"` +
+                    `                    data-user-email="${user.email}">Delete</button>`)
+
+
         }
 
         //заполнение таблицы
@@ -164,11 +180,15 @@
             });
         }
 
-        function getRoles() {
+        function getRoles(target, userRoles) {
             if (!fetch(url + ':roles').then(function (response) {
                 response.json().then(function (json) {
                     $.each(json, function (i, role) {
-                        let $option = $('<option>').text(role.name).val(role.id).appendTo('#editRoles');
+                        let $option =  $('<option>').text(role.name).val(role.id);
+                        if (userRoles !== undefined && userRoles.find(r => r.id === role.id)) {
+                           $option.prop("selected", "true");
+                        }
+                        $option.appendTo(target);
                     })
                 })
             })) {
@@ -176,8 +196,28 @@
             }
         }
 
+        function userToJson(target) {
+            let form = $(`${target} input`);
+            let obj = {};
+
+            $.each(form, (i, item)=>{
+                obj[item.id] = item.value;
+            });
+
+            let roleSelector = document.querySelector(`${target} #editRoles`);
+            console.log(roleSelector.options);
+            let roles = [...roleSelector.options].filter(option => option.selected).map(option => new Object({
+                'id': option.value,
+                'name': option.innerHTML
+            }));
+
+            obj['roles'] = roles;
+            return JSON.stringify(obj);
+        }
+
         getAll();
-        getRoles();
+        getRoles('#formNew #editRoles');
+
 
         $('#formNew').on('submit', function (e) {
             e.preventDefault();
@@ -185,21 +225,8 @@
         });
 
         function postNewUser() {
-            let form = document.querySelectorAll('#formNew input');
-            let obj = {};
 
-            form.forEach(val => {
-                obj[val.id] = val.value;
-            })
-
-            let roleSelector = document.querySelector('#editRoles');
-            let roles = [...roleSelector.options].filter(option => option.selected).map(option => new Object({
-                'id': option.value,
-                'name': option.innerHTML
-            }));
-
-            obj['roles'] = roles;
-            let json = JSON.stringify(obj);
+            let json = userToJson('#formNew');
 
             let newUser = post('POST', json);
             newUser.then((data) => {
@@ -236,17 +263,54 @@
         $('#deleteModal').on('show.bs.modal', function (e) {
             let email = $(e.relatedTarget).data('user-email');
             $.get("/modals/delete?email=" + email, function (data) {
-                console.log(data);
-                fillDeleteForm(data);
                 $('#deleteModal').find('.modal-content').html(deleteModal);
+                fillFormFields(data, '#delete-form');
+
+                $('button[id=submitdel]').on('click', function () {
+                    let id = $('#delete-form input[id=id]').val();
+                    (async () => {
+                        let response = await fetch(url + ':id=' + id, {
+                            method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
+                            mode: 'cors', // no-cors, *cors, same-origin
+                            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                            credentials: 'same-origin', // include, *same-origin, omit
+                            redirect: 'follow', // manual, *follow, error
+                            referrerPolicy: 'no-referrer', // no-referrer, *client
+                        });
+
+                        if (response.ok) {
+                            $('.modal-header button.close').click();
+                            $(`table td:contains("${id}")`).parent().remove();
+                        } else {
+                            alert('Ошибка удаления!');
+                            $('.modal-header button.close').click();
+                        }
+                    })();
+                });
             })
         });
 
         $('#editModal').on('show.bs.modal', function (e) {
             let email = $(e.relatedTarget).data('user-email');
             $.get("/modals/edit?email=" + email, function (data) {
-                $('#editModal').find('.modal-content').html(data);
-            })
+                $('#editModal').find('.modal-content').html(editModal);
+                fillFormFields(data, '#edit-form');
+
+                $('button[id=submitedit]').on('click', function () {
+                    let json = userToJson('#edit-form');
+
+                    let editUser = post('PATCH', json);
+                    editUser.then((data) => {
+                            editRow(data);
+                            $('.modal-header button.close').click();
+                        },
+                        (error) => {
+                            alert('Ошибка сохранения изменений');
+                            $('.modal-header button.close').click();
+                        });
+
+                    });
+                });
         });
 
 
@@ -300,17 +364,79 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button form="delete-form" type="submit" class="btn btn-danger">Delete</button>
+                                <button id="submitdel" class="btn btn-danger">Delete</button>
                             </div>`;
 
-        // заполнение полей формы модального окна
-        function fillDeleteForm(data) {
-            let id = $('#delete-form input[id=id]').val(data.id);
-            console.log(id);
-            $('#delete-form input[id=firstname]').val(data.firstname);
-            $('#delete-form input[id=lastname]').val(data.lastname);
+        // заполнение полей формы модального окна Delete
+        function fillFormFields(data, form) {
+            $.each(data, (key, value) => {
+                console.log('key = ' + key + ', value = ' + value);
+                $(`${form} input[id=${key}]`).val(value);
+            })
+            if(form === '#delete-form') {
+                $.each(data.roles, function (i, role) {
+                    let $option = $('<option>').text(role.name).val(role.id).appendTo(`${form} select[id=editRoles]`);
+                })
+            } else if (form === '#edit-form') {
+                getRoles('#edit-form #editRoles', data.roles);
+            }
+
         }
 
+
+        let editModal = `
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit user</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container mt-3">
+                        <div class="row justify-content-center mt-3">
+                            <div class="col-7">
+                                <form id="edit-form" class="text-center">
+                                    <div class="form-group">
+                                        <label for="id">ID</label>
+                                        <input class="form-control" type="text" id="id" disabled/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="firstname">Firstname</label>
+                                        <input class="form-control" type="text" id="firstname" required/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="lastname">Lastname</label>
+                                        <input class="form-control" type="text" id="lastname" required/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="age">Age</label>
+                                        <input class="form-control" type="text" id="age"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email">Email</label>
+                                        <input class="form-control" type="text" id="email" required/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="password">Password</label>
+                                        <input class="form-control" type="password" id="password"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>ROLES:</label>
+                                        <select multiple size="2" name="roles" class="form-control" id="editRoles">
+
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" id="submitedit">Edit</button>
+                </div>`
     })
 
 

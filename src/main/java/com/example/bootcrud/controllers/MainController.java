@@ -5,6 +5,8 @@ import com.example.bootcrud.entities.Role;
 import com.example.bootcrud.services.RoleService;
 import com.example.bootcrud.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -73,15 +75,10 @@ public class MainController {
 //    }
 
 
-    @PatchMapping( "/{email}")
-    public String updateAdmin(@ModelAttribute("user") UserDto userDto
-            , @PathVariable("email") String email
-            ,@RequestParam("roles") String[] roles) throws ValidationException {
-
-        userDto.setId(userService.findByEmail(email).getId());
-        userDto.setRoles(roleService.getRoleSet(roles));
+    @PatchMapping( "/admin:UserDto")
+    public @ResponseBody UserDto updateAdmin(@RequestBody UserDto userDto) throws ValidationException {
         userService.updateUser(userDto);
-        return "redirect:/admin";
+        return userDto;
     }
 
 
@@ -111,10 +108,9 @@ public class MainController {
     }
 
 
-    @DeleteMapping( "/{id}")
-    public String delete(@PathVariable("id") Long id) {
-        userService.deleteUser(id);
-        return "redirect:/admin";
+    @DeleteMapping( "/admin:id={id}")
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
+        return userService.deleteUser(id) ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 
 
