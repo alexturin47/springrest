@@ -14,8 +14,8 @@
 
     <nav class="navbar navbar-dark bg-dark text-light">
         <div>
-            <span class="font-weight-bold color text-light" sec:authentication="name"></span> with roles:
-            <!--            <span class="text-light" th:text="${#strings.setJoin(owner.getRoles(), ' ')}"></span>-->
+            <span id="principal-name" class="font-weight-bold color text-light" sec:authentication="name"></span> with roles:
+                        <span id="principal-roles" class="text-light"></span>
         </div>
         <a href="/logout" class="text-white-50 text-decoration-none ml-auto">Logout</a>
     </nav>
@@ -138,6 +138,9 @@
     $(document).ready(function () {
         let url = 'http://localhost:8080/admin';
 
+        const principal = $('#principal-name').text();;
+        let principalRoles;
+
         function insertUserRow(user) {
             let $tr = $('<tr>').append(
                 $('<td>').text(user.id).attr('data-id','id'),
@@ -175,6 +178,9 @@
                 response.json().then(function (json) {
                     $.each(json, function (i, user) {
                         insertUserRow(user);
+                        if (user.email === principal) {
+                            setPrincipalRoles(user.roles);
+                        }
                     });
                 });
             });
@@ -196,6 +202,10 @@
             }
         }
 
+        function setPrincipalRoles(roles) {
+            $('#principal-roles').text(roles.map(r => r.name).join(", "));
+        }
+
         function userToJson(target) {
             let form = $(`${target} input`);
             let obj = {};
@@ -215,15 +225,6 @@
             return JSON.stringify(obj);
         }
 
-        getAll();
-        getRoles('#formNew #editRoles');
-
-
-        $('#formNew').on('submit', function (e) {
-            e.preventDefault();
-            postNewUser();
-        });
-
         function postNewUser() {
 
             let json = userToJson('#formNew');
@@ -240,22 +241,47 @@
 
         async function post(method, body) {
             let response = await fetch(url + ':UserDto', {
-                method: method, // *GET, POST, PUT, DELETE, etc.
-                mode: 'cors', // no-cors, *cors, same-origin
-                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-                credentials: 'same-origin', // include, *same-origin, omit
+                method: method,
+                mode: 'cors',
+                cache: 'no-cache',
+                credentials: 'same-origin',
                 headers: {
                     'Content-Type': 'application/json'
-                    // 'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                redirect: 'follow', // manual, *follow, error
-                referrerPolicy: 'no-referrer', // no-referrer, *client
-                body: body // body data type must match "Content-Type" header
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+                body: body
             });
 
             const res = await response.json();
             return res;
         }
+
+        function fillFormFields(data, form) {
+            $.each(data, (key, value) => {
+                console.log('key = ' + key + ', value = ' + value);
+                $(`${form} input[id=${key}]`).val(value);
+            })
+            if(form === '#delete-form') {
+                $.each(data.roles, function (i, role) {
+                    let $option = $('<option>').text(role.name).val(role.id).appendTo(`${form} select[id=editRoles]`);
+                })
+            } else if (form === '#edit-form') {
+                getRoles('#edit-form #editRoles', data.roles);
+            }
+
+        }
+
+        getAll();
+        getRoles('#formNew #editRoles');
+
+        $('#formNew').on('submit', function (e) {
+            e.preventDefault();
+            postNewUser();
+        });
+
+
+
 
 
         /// ========  секция модальных окон ======================================================
@@ -314,7 +340,8 @@
         });
 
 
-        let deleteModal = `<div class="modal-header">
+        let deleteModal = `
+                            <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalLabel">Delete user</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
@@ -366,23 +393,6 @@
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                 <button id="submitdel" class="btn btn-danger">Delete</button>
                             </div>`;
-
-        // заполнение полей формы модального окна Delete
-        function fillFormFields(data, form) {
-            $.each(data, (key, value) => {
-                console.log('key = ' + key + ', value = ' + value);
-                $(`${form} input[id=${key}]`).val(value);
-            })
-            if(form === '#delete-form') {
-                $.each(data.roles, function (i, role) {
-                    let $option = $('<option>').text(role.name).val(role.id).appendTo(`${form} select[id=editRoles]`);
-                })
-            } else if (form === '#edit-form') {
-                getRoles('#edit-form #editRoles', data.roles);
-            }
-
-        }
-
 
         let editModal = `
                 <div class="modal-header">
