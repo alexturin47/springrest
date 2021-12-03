@@ -22,11 +22,6 @@ public class MainController {
 
     private final UserService userService;
     private final RoleService roleService;
-    private List<Map<String, String>> messages = new ArrayList<Map<String, String>>() {{
-        add(new HashMap<String, String>() {{put("id", "1"); put("text", "message 1");}});
-        add(new HashMap<String, String>() {{put("id", "2"); put("text", "message 2");}});
-        add(new HashMap<String, String>() {{put("id", "3"); put("text", "message 3");}});
-    }};
 
     @Autowired
     public MainController(UserService userService, RoleService roleService) {
@@ -66,39 +61,12 @@ public class MainController {
     }
 
 
-    // редактирование юзера
-//    @GetMapping("/edit/{username}")
-//    public String edit(Model model, @PathVariable("username") String username) {
-//        model.addAttribute("user", userService.findByEmail(username));
-//        model.addAttribute("roles", roleServce.index());
-//        return "/edit";
-//    }
-
-
     @PatchMapping( "/admin:UserDto")
     public @ResponseBody UserDto updateAdmin(@RequestBody UserDto userDto) throws ValidationException {
         userService.updateUser(userDto);
         return userDto;
     }
 
-
-
-//    // созадние нового юзера
-//    @GetMapping("/new")
-//    public String newUser(Model model) {
-//        model.addAttribute("user", new UserDto());
-//        model.addAttribute("roles", roleService.index());
-//        return "/new";
-//    }
-
-//    @PostMapping("/new")
-//    public String create(Model model, @ModelAttribute("user") UserDto userDto
-//            , @RequestParam(name = "roles", required = false) String[] roles) throws ValidationException {
-//
-//        userDto.setRoles(roleService.getRoleSet(roles));
-//        userService.saveUser(userDto);
-//        return "redirect:/admin";
-//    }
 
     @PostMapping("admin:UserDto")
     public @ResponseBody UserDto save(@RequestBody UserDto userDto) throws ValidationException {
